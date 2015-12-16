@@ -1,10 +1,15 @@
 FROM centos:centos6
 MAINTAINER Gabriele Modena <gm@nowave.it>
 
-RUN rpm -i http://yum.postgresql.org/9.2/redhat/rhel-6-x86_64/pgdg-centos92-9.2-6.noarch.rpm
+ENV PG_VERSION 9.4
+ENV PG_CENTOS 94
+ENV PG_PORT 5432
+
+RUN rpm -i http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-2.noarch.rpm
+
 RUN yum -y update; yum clean all
-RUN yum -y install postgresql92 postgresql92-server postgresql92-contrib postgresql92-devel postgresql92-plpython postgresql92-plperl
-RUN yum -y install http://bitcast-a.v1.o1.sjc1.bitgravity.com/greenplum/MADlib/files/madlib-1.7.1-Linux.rpm --nogpgcheck
+RUN yum -y install postgresql$PG_CENTOS postgresql$PG_CENTOS-server postgresql$PG_CENTOS-contrib postgresql$PG_CENTOS-devel postgresql$PG_CENTOS-plpython postgresql$PG_CENTOS-plperl
+RUN yum -y install http://bitcast-a.v1.o1.sjc1.bitgravity.com/greenplum/MADlib/files/madlib-1.8-Linux.rpm --nogpgcheck
 # required by madlib setup scripts
 RUN yum -y install which
 
@@ -16,14 +21,14 @@ RUN chmod +x /postgres_user.sh
 RUN chmod +x /postgres_start.sh
 RUN chmod +x /madlib_setup.sh
 
-RUN service postgresql-9.2 initdb
+RUN service postgresql-$PG_VERSION initdb
 
-RUN echo listen_addresses = \'*\' >> /var/lib/pgsql/9.2/data/postgresql.conf
-ADD ./pg_hba.conf /var/lib/pgsql/9.2/data/pg_hba.conf
+RUN echo listen_addresses = \'*\' >> /var/lib/pgsql/$PG_VERSION/data/postgresql.conf
+ADD ./pg_hba.conf /var/lib/pgsql/$PG_VERSION/data/pg_hba.conf
 
 RUN /postgres_user.sh
 RUN /madlib_setup.sh
 
-EXPOSE 5432
+EXPOSE $PG_PORT
 
 CMD /postgres_start.sh

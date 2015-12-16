@@ -1,4 +1,5 @@
 #!/bin/bash
+PGVERSION=9.4
 
-su --login - postgres --command "/usr/pgsql-9.2/bin/postgres -D /var/lib/pgsql/9.2/data -p 5432"
+su --login - postgres --command "/usr/pgsql-${PGVERSION}/bin/postgres -D /var/lib/pgsql/${PGVERSION}/data -p 5432"
 
