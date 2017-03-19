@@ -11,7 +11,7 @@ $ docker pull gmodena/centos-pgsql-madlib
 ```
 Alternatively, you can clone the git repo and build with
 ```
-    $ ./build.sh
+$ ./build.sh
 ```
 2. Run
 
