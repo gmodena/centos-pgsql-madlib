@@ -6,7 +6,6 @@ ARG PG_CENTOS=${PG_CENTOS}
 ARG PG_PORT=${PG_PORT}
 ARG PG_PGDG_VERSION=${PG_PGDG_VERSION}
 ARG MADLIB_VERSION=${MADLIB_VERSION}
-ENV PGDATA /var/lib/pgsql/9.6/data
 
 ADD ./postgres_start.sh /postgres_start.sh
 ADD ./madlib_setup.sh /madlib_setup.sh
@@ -26,10 +25,6 @@ RUN yum -y install which gcc make python-setuptools gcc-c++ cmake m4 postgresql$
 # of the pgsql modules. We'll have to build things from source.
 #RUN yum -y install https://dist.apache.org/repos/dist/release/incubator/madlib/$MADLIB_VERSION-incubating//apache-madlib-$MADLIB_VERSION-incubating-bin-Linux.rpm --nogpgcheck
  
-# RUN systemctl enable postgresql-$PG_VERSION
-# RUN mkdir -p $PGDATA
-# RUN chown -R postgres:postgres $PGDATA
-#RUN su --login postgres --command "/usr/pgsql-9.6/bin/initdb $PGDATA"
 RUN service postgresql-$PG_VERSION initdb
 RUN echo listen_addresses = \'*\' >> /var/lib/pgsql/$PG_VERSION/data/postgresql.conf
 ADD ./pg_hba.conf /var/lib/pgsql/$PG_VERSION/data/pg_hba.conf

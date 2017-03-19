@@ -1,10 +1,15 @@
-centos-postgres-madlib
-===========================
+# centos-postgres-madlib
 
 CentOS 6 dockerfile for PostgreSQL 9.6 and MADlib 1.10 (https://github.com/apache/incubator-madlib).
 MADlib is a collection of UDFs for scalable in-database analytics and statistical modeling.
 
-1. Build with
+
+
+1. This image is available on dockerhub
+```
+$ docker pull gmodena/centos-pgsql-madlib
+```
+Alternatively, you can clone the git repo and build with
 ```
     $ ./build.sh
 ```
