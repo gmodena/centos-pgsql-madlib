@@ -17,15 +17,15 @@ Alternatively, you can clone the git repo and build with
 
 PostreSQL listens on port 5432 in the container; if port 5432 is open on your host you can run:
 ```
-    $ docker run  -dit -p 5432:5432 gmodena/centos-pgsql-madlib
+$ docker run  -dit -p 5432:5432 gmodena/centos-pgsql-madlib
 ```
 otherwise, to assign a random port that maps to 5432 on the container:
 ```
-    $ docker run  -dit -p 5432 gmodena/centos-pgsql-madlib
+$ docker run  -dit -p 5432 gmodena/centos-pgsql-madlib
 ```
 You can see the random port the container is listening on with:
 ```
-    $ docker ps
+$ docker ps
 ```
 
 It might take a while for pgsql to start up. You cam monitor the service status with
@@ -36,8 +36,8 @@ localhost:5432 - accepting connections
 
 3. Usage and test
 ```
-    $ psql -h  -h localhost -p 5432 -d maddb -U madlib --password
-    maddb=# \d
+$ psql -h  -h localhost -p 5432 -d maddb -U madlib --password
+maddb=# \d
                   List of relations
  Schema |          Name           |   Type   | Owner
 --------+-------------------------+----------+--------
