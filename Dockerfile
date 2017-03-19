@@ -1,34 +1,47 @@
 FROM centos:centos6
 MAINTAINER Gabriele Modena <gm@nowave.it>
+ARG PG_VERSION=${PG_VERSION}
+ARG PG_MINOR=${PG_MINOR}
+ARG PG_CENTOS=${PG_CENTOS}
+ARG PG_PORT=${PG_PORT}
+ARG PG_PGDG_VERSION=${PG_PGDG_VERSION}
+ARG MADLIB_VERSION=${MADLIB_VERSION}
+ENV PGDATA /var/lib/pgsql/9.6/data
 
-ENV PG_VERSION 9.4
-ENV PG_CENTOS 94
-ENV PG_PORT 5432
-
-RUN rpm -i http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-2.noarch.rpm
-
-RUN yum -y update; yum clean all
-RUN yum -y install postgresql$PG_CENTOS postgresql$PG_CENTOS-server postgresql$PG_CENTOS-contrib postgresql$PG_CENTOS-devel postgresql$PG_CENTOS-plpython postgresql$PG_CENTOS-plperl
-RUN yum -y install http://bitcast-a.v1.o1.sjc1.bitgravity.com/greenplum/MADlib/files/madlib-1.8-Linux.rpm --nogpgcheck
-# required by madlib setup scripts
-RUN yum -y install which
-
-ADD ./postgres_user.sh /postgres_user.sh
 ADD ./postgres_start.sh /postgres_start.sh
 ADD ./madlib_setup.sh /madlib_setup.sh
+ADD ./env.sh /env.sh
 
-RUN chmod +x /postgres_user.sh
+
 RUN chmod +x /postgres_start.sh
 RUN chmod +x /madlib_setup.sh
 
-RUN service postgresql-$PG_VERSION initdb
+RUN yum -y update; yum clean all
 
+RUN rpm -i https://yum.postgresql.org/${PG_VERSION}/redhat/rhel-6-x86_64/pgdg-centos${PG_CENTOS}-${PG_PGDG_VERSION}.noarch.rpm
+
+RUN yum -y install which gcc make python-setuptools gcc-c++ cmake m4 postgresql${PG_CENTOS} postgresql${PG_CENTOS}-server postgresql${PG_CENTOS}-contrib postgresql${PG_CENTOS}-devel postgresql${PG_CENTOS}-plpython postgresql${PG_CENTOS}-plperl
+
+# It looks like the madlib 1.10-0 rpm does not ship with some of 
+# of the pgsql modules. We'll have to build things from source.
+#RUN yum -y install https://dist.apache.org/repos/dist/release/incubator/madlib/$MADLIB_VERSION-incubating//apache-madlib-$MADLIB_VERSION-incubating-bin-Linux.rpm --nogpgcheck
+ 
+# RUN systemctl enable postgresql-$PG_VERSION
+# RUN mkdir -p $PGDATA
+# RUN chown -R postgres:postgres $PGDATA
+#RUN su --login postgres --command "/usr/pgsql-9.6/bin/initdb $PGDATA"
+RUN service postgresql-$PG_VERSION initdb
 RUN echo listen_addresses = \'*\' >> /var/lib/pgsql/$PG_VERSION/data/postgresql.conf
 ADD ./pg_hba.conf /var/lib/pgsql/$PG_VERSION/data/pg_hba.conf
 
-RUN /postgres_user.sh
+# Download and build madlib via pgxn (https://pgxn.org)
+RUN easy_install pgxnclient
+ENV PATH="/usr/pgsql-${PG_VERSION}/bin/:${PATH}"
+RUN pgxn install "madlib=${MADLIB_VERSION}"
+
 RUN /madlib_setup.sh
 
 EXPOSE $PG_PORT
 
+RUN ps aux 
 CMD /postgres_start.sh
