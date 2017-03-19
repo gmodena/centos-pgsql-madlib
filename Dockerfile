@@ -38,5 +38,4 @@ RUN /madlib_setup.sh
 
 EXPOSE $PG_PORT
 
-RUN ps aux 
 CMD /postgres_start.sh
