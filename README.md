@@ -36,7 +36,7 @@ localhost:5432 - accepting connections
 
 3. Usage and test
 ```
-$ psql -h  -h localhost -p 5432 -d maddb -U madlib --password
+$ psql -h localhost -p 5432 -d maddb -U madlib --password
 maddb=# \d
                   List of relations
  Schema |          Name           |   Type   | Owner
