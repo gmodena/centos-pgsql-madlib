@@ -48,4 +48,4 @@ maddb=# \d
 The default password for this user and database is *password*.
 
 
-Examples for getting started with MADlib can be found at https://github.com/apache/incubator-madlib/examples/gpce/
+Examples for getting started with MADlib can be found at https://github.com/madlib/madlib-examples
